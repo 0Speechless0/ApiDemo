@@ -46,7 +46,7 @@ GET /api/blog
 * 格式: blog陣列，每個blog包含id
 
 ----
-### 取得特定部落格文章資料
+### 取得特定文章資料
 
 ```http
 GET /api/blog/{id}
