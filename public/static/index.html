@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	 <script type = "text/javascript" src = "https://www.tutorialspoint.com/jquery/jquery-3.6.0.js">
+      </script>
+	<meta charset="utf-8">
+	<title>公佈欄</title>
+	<style>	
+		body{
+			margin: uto,auto ;
+		}
+		table{
+			margin-top: 20px;
+			border-collapse:collapse
+		}
+		td{
+			height: 64px;
+			padding: 5px;
+		}
+        #t1 {
+            height: 100%; /*高度填充*/
+            width: 100%;
+            padding: 0; /*防止textarea超過td邊框*/\
+
+            vertical-align: bottom; /*chrome的td有margin-top情況 用此CSS調整*/
+            border: none; /*border用td的*/
+        }
+	</style>	
+</head>
+<body >
+	<div>
+		<label for="title">標題</label>	
+		<input type="text" name="title" id="title">
+<label for="author">作者</label>
+		<input type="author" name="author" id="author">
+		
+
+	</div>	
+	<div>	
+<label for="content">內容</label>
+	</div>
+
+	<div >	
+				
+				<textarea name="content"  cols="30" rows="10" id="content"></textarea>
+		<button onClick="store()" > 發文</button>
+	</div>
+	<table width="1000px" border="1" >	
+		<thead  >	
+			<th width="20%">標題</th>
+			<th >內容</th>
+			<th width="10%">作者</th>
+			<th width="10%">#</th>
+		</thead>	
+		<tbody id="tbody">	
+
+		</tbody>	
+	</table>	
+		<ul id="list">	
+
+		</ul>	
+</body>
+<script type="text/javascript">
+	const remove = (id) => {
+		
+		axios.delete(`api/blog/${id}`)
+		refresh();
+
+	}
+	const edit = (id) => {
+
+		let title = $("#title").val();
+		let content = $("#content").val();
+		let author = $("#author").val(); 
+		axios({
+		  method: 'put',
+		  url: '/api/blog/'+ id,
+		  data: {
+		    author: author,
+		    title: title,
+		    content: content
+		  }
+		});
+	
+		refresh();
+	}
+	const store = () =>{
+		let title = $("#title").val();
+		let content = $("#content").val();
+		let author = $("#author").val(); 
+		axios({
+		  method: 'post',
+		  url: '/api/blog',
+		  data: {
+		    author: author,
+		    title: title,
+		    content: content
+		  }
+		});
+		refresh();
+
+	}
+	const refresh = () => {
+		$("#tbody").empty();
+		axios.get("/api/blog")
+			.then((res) => {		
+				res.data.forEach(e => {
+					$("#tbody").append(`
+						<tr>
+						 	<td>${e.title}</td>
+						 	<td><textarea disabled id="t1">${e.content}</textarea></td>
+						 	<td>${e.author}</td>
+						 	<td> 
+						 			<button id="${e.id}" onClick="remove(${e.id})">刪除</button>
+						 			<button id="${e.id}" onClick="edit(${e.id})">編輯</button>
+						 	</td>
+
+						</tr>
+
+					`)
+
+				});
+			})
+
+	} 
+	refresh();
+
+
+
+</script>
+</html>
